@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap" rel="stylesheet">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <!-- 開始畫面 -->
+    <div class="contain">
+        <div class="start">
+            <div class="money">
+                <img src="./img/m1.png" alt="" style="position:absolute;top: 30%;
+                left: 40%; ">
+                <img src="./img/m2.png" alt="" style="position:absolute;top: 60%;
+                left: 60%; ">
+                <img src="./img/m3.png" alt="" style="position:absolute;top: 15%;
+                left: 35%; ">
+                <img src="./img/m4.png" alt="" style="position:absolute;top: 35%;
+                left: 60%; ">
+                <img src="./img/m5.png" alt="" style="position:absolute;top: 20%;
+                left: 60%; ">
+                <img src="./img/m6.png" alt="" style="position:absolute;top: 40%;
+                left: 50%; ">
+                <img src="./img/m7.png" alt="" style="position:absolute;top: 8%;
+                left: 50%; ">
+                <img src="./img/m8.png" alt="" style="position:absolute;top: 50%;
+                left: 32%; ">
+            </div>
+            <img src="./img/logo-10.png" alt="" style="position:absolute;top: 28%;
+            left: 54%; animation-name: lightSpeedInLeft; animation-duration: 2s">
+            <div style="position:absolute;top: 80%;
+            left: 50%; transform: translate(-50%, -50%); ">
+                <input type="button" value="Start" id="btn-start">
+                <br>
+                <br>
+                <p>------- 限時60秒挑戰，抓到越多紙鈔，就可以成為富翁 -------</p>
+            </div>
+
+        </div>
+    </div>
+    <div class="contain2 hidden">
+        <div class="top">
+            <h1>money: <span id='text-score'>0</span>元</h1>
+            <h1>time: <span id='text-time'>0</span>秒</h1>
+        </div>
+        <div class="game">
+        </div>
+    </div>
+
+    <!-- 引用jq -->
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <!-- 引用sweetalert -->
+    <script src="./js/sweetalert2@10.js"></script>
+    <script>
+        //分數
+        let score = 0
+        // 遊戲時間
+        let countdown = 60
+        // 倒數計時
+        let timer = 0
+
+        const move = (zb) => {
+            zb.stop().animate({
+                left: Math.round(Math.random() * 85) + '%',
+                top: Math.round(Math.random() * 85) + '%'
+            }, 2000, function () {
+                move(zb)
+            })
+        }
+
+
+        // 按下開始按鈕，進入遊戲畫面
+        $('.contain .start #btn-start').on('click', function () {
+            $('.contain').addClass('hidden');
+            $('.contain2').removeClass('hidden');
+
+            score = 0
+            $('#text-score').text(score) //.text 改文字
+            countdown = 30
+            $('#text-time').text(countdown)
+
+            timer = setInterval(() => {
+                // 倒數
+                countdown--
+                $('#text-time').text(countdown)
+
+                // 隨機產生
+                let rand1 = Math.round(Math.random() * 10)
+                if (rand1 > 5 && $('.game img').length < 50) {
+                    const cb = $(`<img id="c1" src="./img/c1.gif" alt="" style="left:${Math.round(Math.random() * 90)}%; top:${Math.round(Math.random() * 90)}% ">`)
+                    const mb = $(`<img id="m1" src="./img/money1.gif" alt="" style="left:${Math.round(Math.random() * 90)}%; top:${Math.round(Math.random() * 90)}% ">`)
+                    const db = $(`<img id="d1" src="./img/d1.gif" alt="" style="left:${Math.round(Math.random() * 90)}%; top:${Math.round(Math.random() * 90)}%; height:100px ">`)
+                    $('.game').append(mb)
+                    move(mb)
+                    $('.game').append(cb)
+                    move(cb)
+                    $('.game').append(db)
+                    move(db)
+                }
+
+                if (countdown <= 0) {
+                    clearInterval(timer)
+                    Swal.fire({
+                        title: '時間到',
+                        text: `恭喜你得到${score}元`
+                    })
+                    $('.game img').remove()
+                    $(this).attr('disable', false)
+                    $('.contain2').addClass('hidden');
+                    $('.contain').removeClass('hidden'); //回到主畫面
+                }
+            }, 1000);
+        })
+
+        $('.game').on('click', '#c1', function () {
+            $(this).stop().attr('src', './img/ok.png').addClass('great').animate({ opacity: 0 })
+            // 忽略點擊事件、無法點擊和選取
+            $(this).addClass('disable')
+            score += 10
+            $('#text-score').text(score)
+        })
+        $('.game').on('click', '#m1', function () {
+            $(this).stop().attr('src', './img/great.png').addClass('great').animate({ opacity: 0 })
+            // 忽略點擊事件、無法點擊和選取
+            $(this).addClass('disable')
+            score += 100
+            $('#text-score').text(score)
+        })
+        $('.game').on('click', '#d1', function () {
+            $(this).stop().attr('src', './img/perfect.png').addClass('great').animate({ opacity: 0 })
+            // 忽略點擊事件、無法點擊和選取
+            $(this).addClass('disable')
+            score += 500
+            $('#text-score').text(score)
+        })
+    </script>
+</body>
+
+</html>
